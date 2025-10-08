@@ -3,7 +3,7 @@ import { useLiveQuery } from 'dexie-react-hooks'
 import { CategoryCard } from './-ui/categoryCard'
 import { AddCategoryForm } from './-ui/categoryForm'
 import { PageHeading } from '@/components/PageHeading'
-import { db } from '@/lib/db/db'
+import { db } from '@/integrations/db/db'
 
 export const Route = createFileRoute('/(app)/categories/')({
   component: RouteComponent,

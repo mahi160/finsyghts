@@ -1,0 +1,10 @@
+pre-commit:
+  commands:
+    check:
+      glob: '*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc}'
+      run: pnpm hook:lint {staged_files}
+commit-msg:
+  commands:
+    lint commit message:
+      run: pnpm hook:commitLint {1}
+      stage_fixed: true

@@ -1,0 +1,58 @@
+/* Account card gradients scoped to the component */
+.account-card {
+  /* Light mode */
+  --bg-cash: linear-gradient(
+    135deg,
+    oklch(0.9686 0.02 136) 0%,
+    oklch(0.918 0.03 136) 100%
+  );
+  --bg-savings: linear-gradient(
+    135deg,
+    oklch(0.94 0.02 255) 0%,
+    oklch(0.88 0.03 255) 100%
+  );
+  --bg-checking: linear-gradient(
+    135deg,
+    oklch(0.95 0.02 280) 0%,
+    oklch(0.88 0.03 280) 100%
+  );
+  --bg-credit: linear-gradient(
+    135deg,
+    oklch(0.98 0.01 0) 0%,
+    oklch(0.9 0.02 0) 100%
+  );
+  --bg-investment: linear-gradient(
+    135deg,
+    oklch(0.98 0.02 90) 0%,
+    oklch(0.92 0.03 90) 100%
+  );
+}
+
+/* Dark mode overrides */
+.dark .account-card {
+  --bg-cash: linear-gradient(
+    135deg,
+    oklch(0.26 0.02 136) 0%,
+    oklch(0.35 0.04 136) 100%
+  );
+  --bg-savings: linear-gradient(
+    135deg,
+    oklch(0.21 0.02 255) 0%,
+    oklch(0.3 0.04 255) 100%
+  );
+  --bg-checking: linear-gradient(
+    135deg,
+    oklch(0.25 0.02 280) 0%,
+    oklch(0.33 0.04 280) 100%
+  );
+  --bg-credit: linear-gradient(
+    135deg,
+    oklch(0.22 0.01 0) 0%,
+    oklch(0.3 0.02 0) 100%
+  );
+  --bg-investment: linear-gradient(
+    135deg,
+    oklch(0.27 0.02 90) 0%,
+    oklch(0.35 0.03 90) 100%
+  );
+}

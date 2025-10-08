@@ -11,6 +11,10 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as appRouteRouteImport } from './routes/(app)/route'
 import { Route as appIndexRouteImport } from './routes/(app)/index'
+import { Route as appSettingsIndexRouteImport } from './routes/(app)/settings/index'
+import { Route as appDashboardIndexRouteImport } from './routes/(app)/dashboard/index'
+import { Route as appCategoriesIndexRouteImport } from './routes/(app)/categories/index'
+import { Route as appAccountsIndexRouteImport } from './routes/(app)/accounts/index'
 
 const appRouteRoute = appRouteRouteImport.update({
   id: '/(app)',
@@ -21,24 +25,63 @@ const appIndexRoute = appIndexRouteImport.update({
   path: '/',
   getParentRoute: () => appRouteRoute,
 } as any)
+const appSettingsIndexRoute = appSettingsIndexRouteImport.update({
+  id: '/settings/',
+  path: '/settings/',
+  getParentRoute: () => appRouteRoute,
+} as any)
+const appDashboardIndexRoute = appDashboardIndexRouteImport.update({
+  id: '/dashboard/',
+  path: '/dashboard/',
+  getParentRoute: () => appRouteRoute,
+} as any)
+const appCategoriesIndexRoute = appCategoriesIndexRouteImport.update({
+  id: '/categories/',
+  path: '/categories/',
+  getParentRoute: () => appRouteRoute,
+} as any)
+const appAccountsIndexRoute = appAccountsIndexRouteImport.update({
+  id: '/accounts/',
+  path: '/accounts/',
+  getParentRoute: () => appRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof appIndexRoute
+  '/accounts': typeof appAccountsIndexRoute
+  '/categories': typeof appCategoriesIndexRoute
+  '/dashboard': typeof appDashboardIndexRoute
+  '/settings': typeof appSettingsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof appIndexRoute
+  '/accounts': typeof appAccountsIndexRoute
+  '/categories': typeof appCategoriesIndexRoute
+  '/dashboard': typeof appDashboardIndexRoute
+  '/settings': typeof appSettingsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/(app)': typeof appRouteRouteWithChildren
   '/(app)/': typeof appIndexRoute
+  '/(app)/accounts/': typeof appAccountsIndexRoute
+  '/(app)/categories/': typeof appCategoriesIndexRoute
+  '/(app)/dashboard/': typeof appDashboardIndexRoute
+  '/(app)/settings/': typeof appSettingsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/accounts' | '/categories' | '/dashboard' | '/settings'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/(app)' | '/(app)/'
+  to: '/' | '/accounts' | '/categories' | '/dashboard' | '/settings'
+  id:
+    | '__root__'
+    | '/(app)'
+    | '/(app)/'
+    | '/(app)/accounts/'
+    | '/(app)/categories/'
+    | '/(app)/dashboard/'
+    | '/(app)/settings/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -61,15 +104,51 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appIndexRouteImport
       parentRoute: typeof appRouteRoute
     }
+    '/(app)/settings/': {
+      id: '/(app)/settings/'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof appSettingsIndexRouteImport
+      parentRoute: typeof appRouteRoute
+    }
+    '/(app)/dashboard/': {
+      id: '/(app)/dashboard/'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof appDashboardIndexRouteImport
+      parentRoute: typeof appRouteRoute
+    }
+    '/(app)/categories/': {
+      id: '/(app)/categories/'
+      path: '/categories'
+      fullPath: '/categories'
+      preLoaderRoute: typeof appCategoriesIndexRouteImport
+      parentRoute: typeof appRouteRoute
+    }
+    '/(app)/accounts/': {
+      id: '/(app)/accounts/'
+      path: '/accounts'
+      fullPath: '/accounts'
+      preLoaderRoute: typeof appAccountsIndexRouteImport
+      parentRoute: typeof appRouteRoute
+    }
   }
 }
 
 interface appRouteRouteChildren {
   appIndexRoute: typeof appIndexRoute
+  appAccountsIndexRoute: typeof appAccountsIndexRoute
+  appCategoriesIndexRoute: typeof appCategoriesIndexRoute
+  appDashboardIndexRoute: typeof appDashboardIndexRoute
+  appSettingsIndexRoute: typeof appSettingsIndexRoute
 }
 
 const appRouteRouteChildren: appRouteRouteChildren = {
   appIndexRoute: appIndexRoute,
+  appAccountsIndexRoute: appAccountsIndexRoute,
+  appCategoriesIndexRoute: appCategoriesIndexRoute,
+  appDashboardIndexRoute: appDashboardIndexRoute,
+  appSettingsIndexRoute: appSettingsIndexRoute,
 }
 
 const appRouteRouteWithChildren = appRouteRoute._addFileChildren(

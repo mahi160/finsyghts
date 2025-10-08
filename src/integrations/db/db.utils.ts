@@ -91,12 +91,11 @@ export async function getRecordByKey<T extends IMetaData>(
   value: IndexableType,
 ): Promise<T | undefined> {
   const userId = localStorage.getItem('user_id')
-  if (!userId)
-    return undefined
+  if (!userId) return undefined
 
   return await (db[tableName] as Table)
     .where({ user_id: userId, [key]: value })
-    .and(record => !record.deleted_at)
+    .and((record) => !record.deleted_at)
     .first()
 }
 
@@ -112,8 +111,7 @@ export async function getRecordById<T extends IMetaData>(
   id: string,
 ): Promise<T | undefined> {
   const userId = localStorage.getItem('user_id')
-  if (!userId)
-    return undefined
+  if (!userId) return undefined
 
   const record = await (db[tableName] as Table).where('id').equals(id).first()
   return record?.user_id === userId && !record.deleted_at ? record : undefined
@@ -129,13 +127,12 @@ export async function getAllRecords<T extends IMetaData>(
   tableName: keyof typeof db,
 ): Promise<Array<T>> {
   const userId = localStorage.getItem('user_id')
-  if (!userId)
-    return []
+  if (!userId) return []
 
   return await (db[tableName] as Table)
     .where('user_id')
     .equals(userId)
-    .filter(record => !record.deleted_at)
+    .filter((record) => !record.deleted_at)
     .toArray()
 }
 
@@ -149,8 +146,7 @@ export async function getPendingSyncRecords<T extends IMetaData>(
   tableName: keyof typeof db,
 ): Promise<Array<T>> {
   const userId = localStorage.getItem('user_id')
-  if (!userId)
-    return []
+  if (!userId) return []
 
   return await (db[tableName] as Table)
     .where('[user_id+sync_status]')

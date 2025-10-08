@@ -11,8 +11,8 @@ export const Route = createFileRoute('/(app)/categories/')({
 
 function RouteComponent() {
   const categories = useLiveQuery(() => db.categories.toArray(), [])
-  const incomes = categories?.filter(c => c.transaction_type === 'income')
-  const expenses = categories?.filter(c => c.transaction_type === 'expense')
+  const incomes = categories?.filter((c) => c.transaction_type === 'income')
+  const expenses = categories?.filter((c) => c.transaction_type === 'expense')
   return (
     <>
       <div className="flex items-center justify-between">
@@ -25,14 +25,14 @@ function RouteComponent() {
       <div className="mt-6 grid grid-cols-1 gap-10">
         <section>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-            {incomes?.map(category => (
+            {incomes?.map((category) => (
               <CategoryCard key={category.id} category={category} />
             ))}
           </div>
         </section>
         <section>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-            {expenses?.map(category => (
+            {expenses?.map((category) => (
               <CategoryCard key={category.id} category={category} />
             ))}
           </div>

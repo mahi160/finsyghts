@@ -14,7 +14,7 @@ import type { EntityTable } from 'dexie'
 
 function seedWithMeta<T>(items: Array<T>): Array<T & IMetaData> {
   const now = new Date()
-  return items.map(item => ({
+  return items.map((item) => ({
     ...item,
     id: ulid(now.getTime()),
     user_id: localStorage.getItem('user_id') as string,

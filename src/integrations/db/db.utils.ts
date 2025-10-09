@@ -1,18 +1,32 @@
 import { ulid } from 'ulid'
+import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from './db'
 import type { IndexableType, Table } from 'dexie'
 import type { IMetaData } from './db.type'
 
 /**
- * Add a new record to a Dexie table with ID, timestamps, and sync status.
+ * Retrieves the current user's ID from localStorage.
+ * @throws {Error} If the user ID is not found.
+ * @returns {string} The user ID.
+ */
+function getUserId(): string {
+  const id = localStorage.getItem('user_id')
+  if (!id) throw new Error('User ID not found in localStorage')
+  return id
+}
+
+/**
+ * Adds a new record to the specified table.
  *
- * @param tableName - Name of the table in Dexie DB
- * @param record - Object containing the data to insert
- * @returns The newly added record, including `id`, `created_at`, `updated_at`, and `sync_status` fields
+ * Automatically injects metadata fields (`id`, `user_id`, timestamps, and sync status`).
+ *
+ * @param {string} tableName - Name of the table.
+ * @param {{ record: Omit<T, keyof IMetaData> }} params - Record data excluding metadata fields.
+ * @returns {Promise<T & IMetaData>} The inserted record with metadata included.
  */
 export async function addRecord<T>(
   tableName: keyof typeof db,
-  record: T,
+  { record }: { record: Omit<T, keyof IMetaData> },
 ): Promise<T & IMetaData> {
   const table = db[tableName] as Table
   const now = new Date()
@@ -21,27 +35,36 @@ export async function addRecord<T>(
   const newRecord = {
     ...record,
     id,
-    user_id: localStorage.getItem('user_id') as string,
+    user_id: getUserId(),
     created_at: now,
     updated_at: now,
     sync_status: 'pending' as const,
   }
+
   await table.add(newRecord)
-  return newRecord
+  return newRecord as T & IMetaData
 }
 
 /**
- * Update an existing record in a Dexie table by ID.
+ * Updates an existing record by key.
  *
- * @param tableName - Name of the table in Dexie DB
- * @param id - ID of the record to update
- * @param updates - Object containing the fields to update
- * @returns The updated record object, including updated `updated_at` and `sync_status` fields
+ * Automatically sets `updated_at` and marks the record as `pending` for sync.
+ *
+ * @param {string} tableName - Name of the table.
+ * @param {{ value: IndexableType, key?: string, updates: Partial<T> }} params - Key-value to match and updates to apply.
+ * @returns {Promise<T | undefined>} The updated record, or undefined if not found.
  */
-export async function updateRecord<T extends IMetaData>(
+export async function updateRecord<T>(
   tableName: keyof typeof db,
-  id: string,
-  updates: Partial<Omit<T, keyof IMetaData>>,
+  {
+    value,
+    key = 'id',
+    updates,
+  }: {
+    value: IndexableType
+    key?: string
+    updates: Partial<T>
+  },
 ): Promise<T | undefined> {
   const table = db[tableName] as Table
   const now = new Date()
@@ -51,20 +74,26 @@ export async function updateRecord<T extends IMetaData>(
     sync_status: 'pending' as const,
   }
 
-  await table.where('id').equals(id).modify(updateData)
-  return await table.where('id').equals(id).first()
+  await table.where(key).equals(value).modify(updateData)
+  return await table.where(key).equals(value).first()
 }
 
 /**
- * Soft-delete a record in a Dexie table by setting `deleted_at` and `sync_status` fields.
+ * Soft-deletes a record by setting `deleted_at` and marking sync status as `pending`.
  *
- * @param tableName - Name of the table in Dexie DB
- * @param id - ID of the record to delete
- * @returns The updated record object with `sync_status` set to pending and `deleted_at` timestamp
+ * @param {string} tableName - Name of the table.
+ * @param {{ value: IndexableType, key?: string }} params - Key-value to identify the record.
+ * @returns {Promise<T | undefined>} The deleted record, or undefined if not found.
  */
-export async function deleteRecord<T extends IMetaData>(
+export async function deleteRecord<T>(
   tableName: keyof typeof db,
-  id: string,
+  {
+    value,
+    key = 'id',
+  }: {
+    value: IndexableType
+    key?: string
+  },
 ): Promise<T | undefined> {
   const table = db[tableName] as Table
   const now = new Date()
@@ -73,26 +102,31 @@ export async function deleteRecord<T extends IMetaData>(
     sync_status: 'pending' as const,
     updated_at: now,
   }
-  await table.where('id').equals(id).modify(updateData)
-  return await table.where('id').equals(id).first()
+
+  await table.where(key).equals(value).modify(updateData)
+  return await table.where(key).equals(value).first()
 }
 
 /**
- * Get a single record from a Dexie table by key-value pair for current user.
+ * Retrieves a single record by key for the current user.
  *
- * @param tableName - Name of the table in Dexie DB
- * @param key - Column name to match
- * @param value - Value to match in the specified column
- * @returns The first record matching the key-value pair, or undefined if not found
+ * Automatically filters out soft-deleted records.
+ *
+ * @param {string} tableName - Name of the table.
+ * @param {{ value: IndexableType, key?: string }} params - Key-value pair for lookup.
+ * @returns {Promise<T | undefined>} The record if found, otherwise undefined.
  */
-export async function getRecordByKey<T extends IMetaData>(
+export async function getRecord<T>(
   tableName: keyof typeof db,
-  key: string,
-  value: IndexableType,
+  {
+    value,
+    key = 'id',
+  }: {
+    value: IndexableType
+    key?: string
+  },
 ): Promise<T | undefined> {
-  const userId = localStorage.getItem('user_id')
-  if (!userId) return undefined
-
+  const userId = getUserId()
   return await (db[tableName] as Table)
     .where({ user_id: userId, [key]: value })
     .and((record) => !record.deleted_at)
@@ -100,54 +134,40 @@ export async function getRecordByKey<T extends IMetaData>(
 }
 
 /**
- * Get a single record from a Dexie table by ID for current user.
+ * Retrieves all non-deleted records for the current user as a live query.
  *
- * @param tableName - Name of the table in Dexie DB
- * @param id - ID of the record to retrieve
- * @returns The record with the specified ID, or undefined if not found
+ * This hook auto-updates whenever the table changes.
+ *
+ * @param {string} tableName - Name of the table.
+ * @returns {T[]} A reactive array of all non-deleted records.
  */
-export async function getRecordById<T extends IMetaData>(
-  tableName: keyof typeof db,
-  id: string,
-): Promise<T | undefined> {
-  const userId = localStorage.getItem('user_id')
-  if (!userId) return undefined
-
-  const record = await (db[tableName] as Table).where('id').equals(id).first()
-  return record?.user_id === userId && !record.deleted_at ? record : undefined
+export function getAllRecords<T>(tableName: keyof typeof db): Array<T> {
+  const userId = getUserId()
+  return (
+    useLiveQuery(
+      () =>
+        (db[tableName] as Table)
+          .where('user_id')
+          .equals(userId)
+          .filter((record) => !record.deleted_at)
+          .toArray(),
+      [tableName, userId],
+    ) || []
+  )
 }
 
 /**
- * Get all non-deleted records from a Dexie table for current user.
+ * Retrieves all records marked as pending or failed for synchronization.
  *
- * @param tableName - Name of the table in Dexie DB
- * @returns An array of all non-deleted records in the specified table for current user
+ * Useful for offline-first sync implementations.
+ *
+ * @param {string} tableName - Name of the table.
+ * @returns {Promise<T[]>} Array of pending or failed sync records.
  */
-export async function getAllRecords<T extends IMetaData>(
+export async function getPendingSyncRecords<T>(
   tableName: keyof typeof db,
 ): Promise<Array<T>> {
-  const userId = localStorage.getItem('user_id')
-  if (!userId) return []
-
-  return await (db[tableName] as Table)
-    .where('user_id')
-    .equals(userId)
-    .filter((record) => !record.deleted_at)
-    .toArray()
-}
-
-/**
- * Get records pending sync for current user.
- *
- * @param tableName - Name of the table in Dexie DB
- * @returns An array of records with sync_status "pending" or "failed"
- */
-export async function getPendingSyncRecords<T extends IMetaData>(
-  tableName: keyof typeof db,
-): Promise<Array<T>> {
-  const userId = localStorage.getItem('user_id')
-  if (!userId) return []
-
+  const userId = getUserId()
   return await (db[tableName] as Table)
     .where('[user_id+sync_status]')
     .anyOf([
@@ -158,14 +178,17 @@ export async function getPendingSyncRecords<T extends IMetaData>(
 }
 
 /**
- * Mark records as synced.
+ * Marks a list of records as synced by their IDs.
  *
- * @param tableName - Name of the table in Dexie DB
- * @param ids - Array of record IDs to mark as synced
+ * Sets `sync_status` to 'synced' and updates `synced_at` timestamp.
+ *
+ * @param {string} tableName - Name of the table.
+ * @param {{ ids: string[] }} params - List of record IDs to mark as synced.
+ * @returns {Promise<void>} Resolves when update is complete.
  */
 export async function markAsSynced(
   tableName: keyof typeof db,
-  ids: Array<string>,
+  { ids }: { ids: Array<string> },
 ): Promise<void> {
   const table = db[tableName] as Table
   const now = new Date()

@@ -129,7 +129,6 @@ export async function getRecord<T>(
   const userId = getUserId()
   return await (db[tableName] as Table)
     .where({ user_id: userId, [key]: value })
-    .and((record) => !record.deleted_at)
     .first()
 }
 

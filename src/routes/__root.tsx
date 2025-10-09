@@ -11,4 +11,8 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
       <Outlet />
     </>
   ),
+  beforeLoad: () => {
+    const userId = localStorage.getItem('user_id')
+    if (!userId) localStorage.setItem('user_id', crypto.randomUUID())
+  },
 })

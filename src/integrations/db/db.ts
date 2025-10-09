@@ -48,7 +48,8 @@ class FinancialDatabase extends Dexie {
       daily_summaries:
         '&id, user_id, date, total_income, total_expense, currency, sync_status, [user_id+date], [user_id+sync_status], [date+currency]',
       meta: '&key, value, updated_at',
-      currencies: '&code, name, symbol, updated_at, is_default, user_id',
+      currencies:
+        '&code, name, symbol, updated_at, is_default, user_id, [user_id+code]',
     })
 
     this.on('populate', async () => {

@@ -8,7 +8,7 @@ import { tanstackRouter } from '@tanstack/router-plugin/vite'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
-    tanstackRouter({ autoCodeSplitting: true }),
+    tanstackRouter({ autoCodeSplitting: true, target: 'react' }),
     viteReact(),
     tailwindcss(),
   ],
@@ -16,5 +16,10 @@ export default defineConfig({
     alias: {
       '@': resolve(__dirname, './src'),
     },
+  },
+  build: {
+    minify: 'esbuild',
+    cssMinify: true,
+    sourcemap: true,
   },
 })

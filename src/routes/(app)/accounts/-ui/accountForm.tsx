@@ -6,7 +6,7 @@ import { EAccountType } from '@/integrations/db/db.type'
 import { ResponsiveModal } from '@/components/ResponsiveModal'
 import { Button } from '@/components/ui/button'
 import { useAppForm } from '@/widgets/Form/useAppForm'
-import { addRecord, updateRecord } from '@/integrations/db/db.utils'
+import { useAccountsStore } from '@/integrations/db/db.store'
 
 export const accountSchema = z.object({
   balance: z.number(),
@@ -39,6 +39,7 @@ export interface IAccountFormProps {
 
 export const AddAccountForm: React.FC<IAccountFormProps> = ({ initial }) => {
   const [open, setOpen] = React.useState(false)
+  const { update, add } = useAccountsStore()
   const defaultValues = {
     balance: initial?.balance || 0,
     name: initial?.name || '',
@@ -57,7 +58,7 @@ export const AddAccountForm: React.FC<IAccountFormProps> = ({ initial }) => {
     onSubmit: async ({ value }) => {
       try {
         if (isEdit && initial?.id) {
-          await updateRecord('accounts', initial.id, {
+          await update(initial.id, {
             name: value.name,
             type: value.type,
             currency: value.currency,
@@ -65,7 +66,7 @@ export const AddAccountForm: React.FC<IAccountFormProps> = ({ initial }) => {
             is_archived: value.is_archived,
           })
         } else {
-          await addRecord('accounts', {
+          await add({
             name: value.name,
             type: value.type,
             currency: value.currency,

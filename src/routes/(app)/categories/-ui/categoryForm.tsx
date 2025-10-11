@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { CATEGORY_ICONS } from '@/lib'
 import { useAppForm } from '@/widgets/Form/useAppForm'
 import { ETransactionType } from '@/integrations/db/db.type'
-import { addRecord, updateRecord } from '@/integrations/db/db.utils'
+import { useCategoriesStore } from '@/integrations/db/db.store'
 
 export const categorySchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -29,6 +29,7 @@ export interface ICategoryFormProps {
 }
 
 export const AddCategoryForm: React.FC<ICategoryFormProps> = ({ initial }) => {
+  const { update, add } = useCategoriesStore()
   const [open, setOpen] = React.useState(false)
   const defaultValues = {
     name: initial?.name || '',
@@ -47,16 +48,16 @@ export const AddCategoryForm: React.FC<ICategoryFormProps> = ({ initial }) => {
     onSubmit: async ({ value }) => {
       try {
         if (isEdit && initial?.id) {
-          await updateRecord('categories', initial.id, {
+          await update(initial.id, {
             name: value.name,
-            transaction_type: value.transaction_type,
+            transaction_type: value.transaction_type as ETransactionType,
             icon: value.icon,
             is_archived: value.is_archived,
           })
         } else {
-          await addRecord('categories', {
+          await add({
             name: value.name,
-            transaction_type: value.transaction_type,
+            transaction_type: value.transaction_type as ETransactionType,
             icon: value.icon,
           })
         }

@@ -1,8 +1,8 @@
-import type { Table } from 'dexie'
+import type { EntityTable } from 'dexie'
 import type { IMetaData } from './db.type'
 
 export function subscribeDexieToStore<T extends IMetaData>(
-  table: Table<T, string>,
+  table: EntityTable<T, 'id'>,
   setState: (fn: (state: { items: Array<T> }) => { items: Array<T> }) => void,
 ) {
   const patchItem = (item: T) => {

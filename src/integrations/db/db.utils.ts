@@ -1,5 +1,5 @@
 import { ulid } from 'ulid'
-import type { Table } from 'dexie'
+import type { EntityTable } from 'dexie'
 import type { IMetaData } from './db.type'
 
 function getUserId(): string {
@@ -21,7 +21,7 @@ export function createWithMeta<T>(record: Partial<T>): T & IMetaData {
   } as T & IMetaData
 }
 
-export function createCrud<T extends IMetaData>(table: Table<T, string>) {
+export function createCrud<T extends IMetaData>(table: EntityTable<T, 'id'>) {
   return {
     async add(record: Partial<T>): Promise<T & IMetaData> {
       const recordWithMeta = createWithMeta<T>(record)

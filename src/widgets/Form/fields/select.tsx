@@ -15,7 +15,7 @@ export interface SelectOption {
   label: string
 }
 
-export interface IFormSelectProps {
+export interface IFormSelectProps extends React.ComponentProps<typeof Select> {
   label: string
   placeholder?: string
   options: Array<SelectOption>
@@ -24,7 +24,7 @@ export interface IFormSelectProps {
 }
 
 export const FormSelect: React.FC<IFormSelectProps> = (props) => {
-  const { name, label, placeholder, options, Item } = props
+  const { name, label, placeholder, options, Item, ...rest } = props
   const field = useFieldContext<string>()
   const errors = useStore(field.store, (state) => state.meta.errors)
 
@@ -36,13 +36,13 @@ export const FormSelect: React.FC<IFormSelectProps> = (props) => {
         onValueChange={field.handleChange}
         name={name}
       >
-        <SelectTrigger className="w-full">
+        <SelectTrigger className="w-full" {...rest}>
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
         <SelectContent>
-          {options.map(({ label, value }) => (
+          {options.map(({ label: itemLabel, value }) => (
             <SelectItem key={value} value={value}>
-              {Item?.(label, value) || label}
+              {Item?.(itemLabel, value) || itemLabel}
             </SelectItem>
           ))}
         </SelectContent>

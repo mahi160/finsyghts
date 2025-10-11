@@ -39,30 +39,35 @@ export const AddAccountForm: React.FC<IAccountFormProps> = ({ initial }) => {
 
   const isEdit = Boolean(initial?.id)
 
-  const currencyOptions = React.useMemo(
-    () =>
-      currencies.map((currency) => ({
-        value: currency.code,
-        label: `${currency.code} - ${currency.name}`,
-      })),
-    [currencies],
-  )
+  const currencyOptions = currencies
+    .map((currency) => ({
+      value: currency.code,
+      label: `${currency.code} - ${currency.name}`,
+      is_default: currency.is_default,
+    }))
+    .sort((a, b) => {
+      if (a.is_default && !b.is_default) return -1
+      if (!a.is_default && b.is_default) return 1
+      return a.label.localeCompare(b.label)
+    })
 
-  const defaultValues = React.useMemo(
-    () => ({
-      name: initial?.name || '',
-      balance: initial?.balance.toString() || '0.00',
-      type: initial?.type || EAccountType.CASH,
-      currency: initial?.currency || 'USD',
-      is_archived: initial?.is_archived || false,
-    }),
-    [initial],
-  )
+  const defaultValues = {
+    name: initial?.name || '',
+    balance: initial?.balance.toString() || '0.00',
+    type: initial?.type || EAccountType.CASH,
+    currency: initial?.currency || currencyOptions[0]?.value,
+    is_archived: initial?.is_archived || false,
+  }
 
   const handleFormSubmit = React.useCallback(
     async ({ value }: { value: z.infer<typeof accountSchema> }) => {
-      const signedBalance = (type: EAccountType, balance: string | number) =>
-        (type === EAccountType.CREDIT ? -1 : 1) * Number(balance)
+      const signedBalance = (type: EAccountType, balance: string | number) => {
+        if (type === EAccountType.CREDIT && Number(balance) !== 0) {
+          return -Math.abs(Number(balance))
+        } else {
+          return Math.abs(Number(balance))
+        }
+      }
 
       const finalBalance = signedBalance(value.type, value.balance)
 
@@ -145,6 +150,7 @@ export const AddAccountForm: React.FC<IAccountFormProps> = ({ initial }) => {
               label="Account Type"
               placeholder="Select account type"
               options={accountTypeOptions}
+              disabled={isEdit}
             />
           )}
         </form.AppField>
@@ -163,9 +169,10 @@ export const AddAccountForm: React.FC<IAccountFormProps> = ({ initial }) => {
           {(field) => (
             <field.Input
               type="number"
-              step="0.01"
+              step="1"
+              min="0"
               label="Balance / Due"
-              placeholder="0.00"
+              placeholder="0"
             />
           )}
         </form.AppField>

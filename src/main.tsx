@@ -3,11 +3,13 @@ import { StrictMode } from 'react'
 import ReactDOM from 'react-dom/client'
 
 import { NotFound } from './components/NotFound.tsx'
+import { SuperPWA } from './components/PWASupport.tsx'
 
 import * as TanStackQueryProvider from './integrations/query/root-provider.tsx'
 
 import { routeTree } from './routeTree.gen'
 import './styles.css'
+import reportWebVitals from './reportWebVitals.ts'
 
 const TanStackQueryProviderContext = TanStackQueryProvider.getContext()
 const router = createRouter({
@@ -36,8 +38,12 @@ if (rootElement && !rootElement.innerHTML) {
   root.render(
     <StrictMode>
       <TanStackQueryProvider.Provider {...TanStackQueryProviderContext}>
-        <RouterProvider router={router} />
+        <>
+          <RouterProvider router={router} />
+          <SuperPWA />
+        </>
       </TanStackQueryProvider.Provider>
     </StrictMode>,
   )
 }
+reportWebVitals()

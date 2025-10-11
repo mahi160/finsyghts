@@ -4,24 +4,9 @@ import { ExpenseForm } from './expenseForm'
 import { IncomeForm } from './incomeForm'
 import { TransferForm } from './transferForm'
 import { Button } from '@/components/ui/button'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog'
-import {
-  Drawer,
-  DrawerContent,
-  DrawerDescription,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from '@/components/ui/drawer'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { useIsMobile } from '@/hooks/use-mobile'
+import { ResponsiveModal } from '@/components/ResponsiveModal'
 
 export const AddRecord: React.FC<
   React.ButtonHTMLAttributes<HTMLButtonElement>
@@ -38,36 +23,20 @@ export const AddRecord: React.FC<
     </div>
   )
 
-  return isMobile ? (
-    <Drawer>
-      <DrawerTrigger asChild>
-        <Button className="size-12 rounded-xl bg-primary text-primary-foreground shadow-lg transition-all duration-200 hover:scale-105 hover:bg-primary/90 hover:shadow-xl">
-          <Plus className="size-5 stroke-[2.5px]" />
-        </Button>
-      </DrawerTrigger>
-      <DrawerContent className="h-svh">
-        <DrawerHeader hidden>
-          <DrawerTitle></DrawerTitle>
-          <DrawerDescription></DrawerDescription>
-        </DrawerHeader>
-        {RecordContent}
-      </DrawerContent>
-    </Drawer>
+  const TriggerButton = isMobile ? (
+    <Button className="size-12 rounded-xl bg-primary text-primary-foreground shadow-lg transition-all duration-200 hover:scale-105 hover:bg-primary/90 hover:shadow-xl">
+      <Plus className="size-5 stroke-[2.5px]" />
+    </Button>
   ) : (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button {...props}>
-          <Plus /> Add Transaction
-        </Button>
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader hidden>
-          <DialogTitle></DialogTitle>
-          <DialogDescription></DialogDescription>
-        </DialogHeader>
-        {RecordContent}
-      </DialogContent>
-    </Dialog>
+    <Button {...props}>
+      <Plus /> Add Transaction
+    </Button>
+  )
+
+  return (
+    <ResponsiveModal {...props} trigger={TriggerButton}>
+      {RecordContent}
+    </ResponsiveModal>
   )
 }
 

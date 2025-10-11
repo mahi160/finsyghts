@@ -5,8 +5,8 @@ import type {
   IAccount,
   IBudget,
   ICategory,
+  ICurrency,
   IDailySummary,
-  IMeta,
   IMetaData,
   ITransaction,
 } from './db.type'
@@ -23,13 +23,14 @@ function seedWithMeta<T>(items: Array<T>): Array<T & IMetaData> {
     sync_status: 'pending' as const,
   }))
 }
+
 class FinancialDatabase extends Dexie {
   transactions!: EntityTable<ITransaction, 'id'>
   accounts!: EntityTable<IAccount, 'id'>
   categories!: EntityTable<ICategory, 'id'>
   budgets!: EntityTable<IBudget, 'id'>
   daily_summaries!: EntityTable<IDailySummary, 'id'>
-  meta!: EntityTable<IMeta, 'key'>
+  currencies!: EntityTable<ICurrency, 'id'>
 
   constructor() {
     super('FinancialDatabase')
@@ -44,7 +45,8 @@ class FinancialDatabase extends Dexie {
         '&id, user_id, category_id, period_start, period_end, period_key, amount, currency, is_archived, sync_status, [user_id+category_id], [user_id+sync_status], [user_id+period_key], [category_id+period_key]',
       daily_summaries:
         '&id, user_id, date, total_income, total_expense, currency, sync_status, [user_id+date], [user_id+sync_status], [date+currency]',
-      meta: '&key, value, updated_at',
+      currencies:
+        '&id, &code, name, symbol, updated_at, is_default, user_id, [id+user_id]',
     })
 
     this.on('populate', async () => {

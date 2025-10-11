@@ -2,7 +2,6 @@ import { RefreshCcw, Shuffle } from 'lucide-react'
 import React from 'react'
 import DarkModeToggle from './mode'
 import { Button } from '@/components/ui/button'
-import { Label } from '@/components/ui/label'
 import {
   Select,
   SelectContent,
@@ -61,23 +60,20 @@ export default function ThemeSelector() {
     [theme],
   )
   const randomTheme = React.useCallback(() => {
-    const theme =
-      THEME_OPTIONS[Math.floor(Math.random() * THEME_OPTIONS.length)].id
-    handleChange(theme)
+    const t = THEME_OPTIONS[Math.floor(Math.random() * THEME_OPTIONS.length)].id
+    handleChange(t)
   }, [handleChange])
 
   return (
     <div className="space-y-2">
-      <Label className="font-medium text-sm" htmlFor="theme-selector">
-        Color Theme
-      </Label>
+      <h2 className="text-xl font-medium">Color Theme</h2>
       <div className="flex items-center gap-2">
-        <Select
-          name="theme-selector"
-          value={theme}
-          onValueChange={handleChange}
-        >
-          <SelectTrigger aria-label="Select color theme" className="min-w-56">
+        <Select value={theme} onValueChange={handleChange}>
+          <SelectTrigger
+            id="theme-selector"
+            aria-label="Select color theme"
+            className="min-w-56"
+          >
             <SelectValue placeholder="Choose a theme" />
           </SelectTrigger>
           <SelectContent className="max-h-80" hideScrollButtons>

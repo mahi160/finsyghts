@@ -78,3 +78,10 @@ export interface IMeta {
   value: string
   updated_at: Date
 }
+
+export interface ICurrency extends IMetaData {
+  code: string
+  name: string
+  symbol: string
+  is_default?: boolean
+}

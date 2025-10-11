@@ -1,0 +1,62 @@
+import { create } from 'zustand'
+import { db } from './db'
+import { createCrud } from './db.utils'
+import { subscribeDexieToStore } from './db.subscribe'
+import type { Table } from 'dexie'
+import type { IMetaData } from './db.type'
+
+type GenericStore<T extends IMetaData> = {
+  items: Array<T>
+  fetchAll: () => Promise<void>
+  add: (record: Partial<T>) => Promise<T & IMetaData>
+  update: (id: string, updates: Partial<T>) => Promise<void>
+  remove: (id: string) => Promise<void>
+}
+
+function createDbStore<T extends IMetaData>(table: Table) {
+  const crud = createCrud<T>(table)
+
+  const store = create<GenericStore<T>>((set) => ({
+    items: [],
+
+    async fetchAll() {
+      const allItems = await crud.all()
+      set({ items: allItems })
+    },
+
+    async add(record: Partial<T>) {
+      const newItem = await crud.add(record)
+      set((state) => ({ items: [...state.items, newItem] }))
+      return newItem
+    },
+
+    async update(id: string, updates: Partial<T>) {
+      await crud.update(id, updates)
+      set((state) => ({
+        items: state.items.map((item) =>
+          item.id === id ? { ...item, ...updates } : item,
+        ),
+      }))
+    },
+
+    async remove(id: string) {
+      await crud.remove(id)
+      set((state) => ({
+        items: state.items.filter((item) => item.id !== id),
+      }))
+    },
+  }))
+
+  subscribeDexieToStore(table, store.setState)
+
+  return store
+}
+
+// Table Stores
+export const useTransactionsStore = createDbStore(db.transactions)
+export const useAccountsStore = createDbStore(db.accounts)
+export const useCategoriesStore = createDbStore(db.categories)
+export const useBudgetsStore = createDbStore(db.budgets)
+export const useDailySummariesStore = createDbStore(db.daily_summaries)
+export const useMetaStore = createDbStore(db.meta)
+export const useCurrenciesStore = createDbStore(db.currencies)

@@ -1,12 +1,14 @@
 import type { ICurrency } from '@/integrations/db/db.type'
 import { useCurrenciesStore } from '@/integrations/db/db.store'
+import { db } from '@/integrations/db/db'
 
 export const updateCurrency = async (
   currency: Partial<ICurrency>,
   checked: boolean,
 ) => {
-  const { add, remove, update, items } = useCurrenciesStore.getState()
-  const id = items.find((c) => c.code === currency.code)?.id
+  const { add, remove, update } = useCurrenciesStore.getState()
+  const allCurrencies = await db.currencies.toArray()
+  const id = allCurrencies.find((c) => c.code === currency.code)?.id
   if (!id) {
     if (checked) return await add({ ...currency })
   } else {

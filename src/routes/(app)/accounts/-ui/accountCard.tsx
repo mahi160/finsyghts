@@ -8,7 +8,7 @@ export function AccountCard({ account }: { account: IAccount }) {
   return (
     <div
       className={cn(
-        'account-card relative h-48 overflow-hidden rounded-xl p-6 font-sans',
+        'account-card relative h-48 min-w-60 w-full overflow-hidden rounded-xl p-6 font-sans',
       )}
       style={{
         background: `var(--bg-${type.toLowerCase()})`,
@@ -17,7 +17,7 @@ export function AccountCard({ account }: { account: IAccount }) {
     >
       {is_archived && (
         <div className="absolute inset-0 z-10 flex items-center justify-center rounded-xl bg-slate-900/60 backdrop-blur-[2px]">
-          <span className="font-bold text-lg text-white/80 tracking-wider">
+          <span className="font-meduim text-lg text-white/80 tracking-wider">
             Archived
           </span>
         </div>
@@ -34,10 +34,17 @@ export function AccountCard({ account }: { account: IAccount }) {
       </header>
 
       <main>
-        <p className="mb-1 text-foreground/70 text-xs">Current Balance</p>
-        <p className="font-bold text-3xl tracking-tight">
-          {formatCurrency(balance, currency)}
+        <p className="mb-1 text-foreground/70 text-xs">
+          Current {type === 'credit' ? 'Due' : 'Balance'}
         </p>
+        <code className="font-semibold text-3xl tracking-tight">
+          {type === 'credit' && '-'}
+          {formatCurrency(balance, currency).split('.')[0]}
+          <span className="text-xs font-normal text-foreground/70">
+            <i>.</i>
+            {formatCurrency(balance, currency).split('.')[1]}
+          </span>
+        </code>
       </main>
 
       <footer className="absolute right-6 bottom-5 left-6 text-foreground/80 text-xs">

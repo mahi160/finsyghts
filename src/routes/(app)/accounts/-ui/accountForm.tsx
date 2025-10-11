@@ -1,18 +1,22 @@
-import { Pencil } from 'lucide-react'
+import { Pencil, Plus } from 'lucide-react'
 import React from 'react'
 import z from 'zod'
 import type { IAccount } from '@/integrations/db/db.type'
-import { EAccountType } from '@/integrations/db/db.type'
 import { ResponsiveModal } from '@/components/ResponsiveModal'
 import { Button } from '@/components/ui/button'
 import { useAppForm } from '@/widgets/Form/useAppForm'
-import { useAccountsStore } from '@/integrations/db/db.store'
+import {
+  useAccountsStore,
+  useCurrenciesStore,
+} from '@/integrations/db/db.store'
+
+import { EAccountType } from '@/integrations/db/db.type'
 
 export const accountSchema = z.object({
-  balance: z.number(),
   name: z.string().min(1, 'Name is required'),
-  type: z.enum(EAccountType),
+  balance: z.string().refine((val) => !isNaN(Number(val))),
   currency: z.string().min(1, 'Currency is required'),
+  type: z.enum(EAccountType),
   is_archived: z.boolean(),
 })
 
@@ -24,45 +28,51 @@ const accountTypeOptions = [
   { value: EAccountType.INVESTMENT, label: 'Investment' },
 ]
 
-const currencyOptions = [
-  { value: 'USD', label: 'USD ($)' },
-  { value: 'EUR', label: 'EUR (€)' },
-  { value: 'GBP', label: 'GBP (£)' },
-  { value: 'JPY', label: 'JPY (¥)' },
-  { value: 'CAD', label: 'CAD (C$)' },
-  { value: 'AUD', label: 'AUD (A$)' },
-]
-
 export interface IAccountFormProps {
   initial?: IAccount
 }
 
 export const AddAccountForm: React.FC<IAccountFormProps> = ({ initial }) => {
   const [open, setOpen] = React.useState(false)
-  const { update, add } = useAccountsStore()
-  const defaultValues = {
-    balance: initial?.balance || 0,
-    name: initial?.name || '',
-    type: initial?.type || EAccountType.CASH,
-    currency: initial?.currency || 'USD',
-    is_archived: initial?.is_archived || false,
-  }
+  const { add, update } = useAccountsStore()
+  const { items: currencies } = useCurrenciesStore()
+
   const isEdit = Boolean(initial?.id)
 
-  const form = useAppForm({
-    defaultValues,
-    validators: {
-      onBlur: accountSchema,
-      onSubmit: accountSchema,
-    },
-    onSubmit: async ({ value }) => {
+  const currencyOptions = React.useMemo(
+    () =>
+      currencies.map((currency) => ({
+        value: currency.code,
+        label: `${currency.code} - ${currency.name}`,
+      })),
+    [currencies],
+  )
+
+  const defaultValues = React.useMemo(
+    () => ({
+      name: initial?.name || '',
+      balance: initial?.balance.toString() || '0.00',
+      type: initial?.type || EAccountType.CASH,
+      currency: initial?.currency || 'USD',
+      is_archived: initial?.is_archived || false,
+    }),
+    [initial],
+  )
+
+  const handleFormSubmit = React.useCallback(
+    async ({ value }: { value: z.infer<typeof accountSchema> }) => {
+      const signedBalance = (type: EAccountType, balance: string | number) =>
+        (type === EAccountType.CREDIT ? -1 : 1) * Number(balance)
+
+      const finalBalance = signedBalance(value.type, value.balance)
+
       try {
         if (isEdit && initial?.id) {
           await update(initial.id, {
             name: value.name,
             type: value.type,
             currency: value.currency,
-            balance: value.balance,
+            balance: finalBalance,
             is_archived: value.is_archived,
           })
         } else {
@@ -70,8 +80,8 @@ export const AddAccountForm: React.FC<IAccountFormProps> = ({ initial }) => {
             name: value.name,
             type: value.type,
             currency: value.currency,
-            initial_balance: value.balance,
-            balance: value.balance,
+            initial_balance: finalBalance,
+            balance: finalBalance,
           })
         }
         setOpen(false)
@@ -79,28 +89,36 @@ export const AddAccountForm: React.FC<IAccountFormProps> = ({ initial }) => {
         console.error('Failed to save account:', error)
       }
     },
+    [add, initial, isEdit, update],
+  )
+
+  const form = useAppForm({
+    defaultValues,
+    validators: {
+      onChange: accountSchema,
+    },
+    onSubmit: handleFormSubmit,
   })
 
   const Footer = (
-    <>
-      <form.AppForm>
-        <form.FormButton
-          label="Submit"
-          className="mt-2 w-full"
-          onClick={() => {
-            form.handleSubmit()
-            setOpen(false)
-          }}
-        />
-      </form.AppForm>
-    </>
+    <form.AppForm>
+      <form.FormButton
+        onClick={form.handleSubmit}
+        label="Submit"
+        className="mt-2 w-full"
+      />
+    </form.AppForm>
   )
+
   const Trigger = isEdit ? (
-    <Button size="icon" variant="ghost">
+    <Button size="icon" variant="ghost" aria-label="Edit Account">
       <Pencil />
     </Button>
   ) : (
-    <Button>Add Account</Button>
+    <Button>
+      <span className="hidden sm:inline">Add Account</span>
+      <Plus className="sm:hidden" aria-hidden="true" />
+    </Button>
   )
 
   return (
@@ -111,13 +129,7 @@ export const AddAccountForm: React.FC<IAccountFormProps> = ({ initial }) => {
       footer={Footer}
       hideHeader
     >
-      <form
-        onSubmit={(e) => {
-          e.preventDefault()
-          e.preventDefault()
-        }}
-        className="grid gap-6"
-      >
+      <form onSubmit={form.handleSubmit} className="grid gap-6">
         <form.AppField name="name">
           {(field) => (
             <field.Input
@@ -152,7 +164,7 @@ export const AddAccountForm: React.FC<IAccountFormProps> = ({ initial }) => {
             <field.Input
               type="number"
               step="0.01"
-              label={isEdit ? 'Current Balance' : 'Initial Balance'}
+              label="Balance / Due"
               placeholder="0.00"
             />
           )}

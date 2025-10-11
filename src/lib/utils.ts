@@ -1,5 +1,6 @@
 import { clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
+import { format } from 'date-fns'
 import type { ClassValue } from 'clsx'
 
 export function cn(...inputs: Array<ClassValue>) {
@@ -12,6 +13,9 @@ export function formatCurrency(amount: number, currency: string = 'USD') {
     currency,
   }).format(amount)
 }
-export function formatDate(dateString: string | Date) {
-  return new Date(dateString).toLocaleDateString('en-US')
+export function formatDate(
+  dateString: string | Date,
+  formatStr = 'MMM dd, yyyy',
+) {
+  return format(new Date(dateString), formatStr)
 }

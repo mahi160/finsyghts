@@ -16,7 +16,7 @@ function RouteComponent() {
         <AddAccountForm />
       </div>
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         {accounts.map((account) => (
           <AccountCard key={account.id} account={account} />
         ))}

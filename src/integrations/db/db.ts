@@ -38,7 +38,7 @@ class FinancialDatabase extends Dexie {
       transactions:
         '&id, user_id, date, type, account_from_id, account_to_id, category_id, amount, sync_status, currency, [user_id+date], [user_id+sync_status], [date+type], [account_from_id+date], [category_id+date], [user_id+date+type]',
       accounts:
-        '&id, user_id, name, type, currency, balance, is_archived, sync_status, [user_id+type], [user_id+sync_status], [user_id+is_archived], [type+is_archived]',
+        '&id, user_id, name, type, currency, balance, is_archived, sync_status, [user_id+type], [user_id+sync_status], [user_id+is_archived], [type+is_archived], [id+user_id]',
       categories:
         '&id, user_id, name, transaction_type, parent_category_id, is_archived, sync_status, [user_id+transaction_type], [user_id+sync_status], [user_id+is_archived], [parent_category_id+transaction_type]',
       budgets:

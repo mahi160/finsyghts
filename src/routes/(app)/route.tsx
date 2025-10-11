@@ -11,7 +11,7 @@ function RouteComponent() {
   return (
     <SidebarProvider>
       <AppSidebar />
-      <main className="h-svh w-full p-8">
+      <main className="h-vh w-full p-8 pb-20 sm:pb-8">
         <Outlet />
       </main>
       <AppBottomBar />

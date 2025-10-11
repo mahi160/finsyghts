@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { CurrencySettings } from './-widgets/currency'
-import ThemeSelector from '@/widgets/ThemeSelector/theme'
+import ThemeSelector from './-widgets/themeSelector/theme'
 
 export const Route = createFileRoute('/(app)/settings/')({
   component: RouteComponent,

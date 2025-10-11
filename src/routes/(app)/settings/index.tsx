@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { CurrencySettings } from './-ui/currency'
+import { CurrencySettings } from './-widgets/currency'
 import ThemeSelector from '@/widgets/ThemeSelector/theme'
 
 export const Route = createFileRoute('/(app)/settings/')({
@@ -8,7 +8,7 @@ export const Route = createFileRoute('/(app)/settings/')({
 
 function RouteComponent() {
   return (
-    <div className="space-y-6 p-4">
+    <div className="space-y-6">
       <h1 className="font-bold text-2xl">Settings</h1>
       <ThemeSelector />
       <CurrencySettings />

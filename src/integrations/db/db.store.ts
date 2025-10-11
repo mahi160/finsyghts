@@ -30,25 +30,15 @@ function createDbStore<T extends IMetaData>(table: EntityTable<T, 'id'>) {
     },
 
     async add(record: Partial<T>) {
-      const newItem = await crud.add(record)
-      set((state) => ({ items: [...state.items, newItem] }))
-      return newItem
+      return await crud.add(record)
     },
 
     async update(id: string, updates: Partial<T>) {
       await crud.update(id, updates)
-      set((state) => ({
-        items: state.items.map((item) =>
-          item.id === id ? { ...item, ...updates } : item,
-        ),
-      }))
     },
 
     async remove(id: string) {
       await crud.remove(id)
-      set((state) => ({
-        items: state.items.filter((item) => item.id !== id),
-      }))
     },
   }))
 

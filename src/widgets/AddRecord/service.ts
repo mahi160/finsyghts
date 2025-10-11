@@ -1,32 +1,25 @@
-import { add, remove } from 'dexie'
 import type { ITransaction } from '@/integrations/db/db.type'
-import { db } from '@/integrations/db/db'
-import { addRecord, updateRecord } from '@/integrations/db/db.utils'
+import {
+  useAccountsStore,
+  useCategoriesStore,
+  useTransactionsStore,
+} from '@/integrations/db/db.store'
 
 export async function addTransactionService(data: ITransaction) {
-  return await db.transaction(
-    'rw',
-    db.transactions,
-    db.accounts,
-    db.categories,
-    async () => {
-      await addRecord('transactions', data)
-      if (data.category_id) {
-        await updateRecord('categories', data.category_id, {
-          count: add(1),
-        })
-      }
+  const { add: at } = useTransactionsStore.getState()
+  const { update: ua, items: ia } = useAccountsStore.getState()
+  const { update: uc, items: ic } = useCategoriesStore.getState()
+  return await at(data).then(async () => {
+    const accountFrom = ia.find((a) => a.id === data.account_from_id)
+    const accountTo = ia.find((a) => a.id === data.account_to_id)
+    const category = ic.find((c) => c.id === data.category_id)
 
-      if (data.account_to_id) {
-        await updateRecord('accounts', data.account_to_id, {
-          balance: add(data.amount),
-        })
-      }
-      if (data.account_from_id) {
-        await updateRecord('accounts', data.account_from_id, {
-          balance: remove(data.amount),
-        })
-      }
-    },
-  )
+    if (accountFrom)
+      await ua(accountFrom.id, { balance: accountFrom.balance - data.amount })
+
+    if (accountTo)
+      await ua(accountTo.id, { balance: accountTo.balance + data.amount })
+
+    if (category) await uc(category.id, { count: (category.count || 0) + 1 })
+  })
 }

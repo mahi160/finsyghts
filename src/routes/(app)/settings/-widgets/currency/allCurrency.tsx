@@ -54,7 +54,7 @@ export const AllCurrencies: React.FC<{ selected: Array<ICurrency> }> = ({
       key={currency.code}
       htmlFor={`currency-${currency.code}`}
       className={cn(
-        'flex items-center gap-3 p-2 hover:bg-secondary/50 rounded-md transition-colors',
+        'flex items-center gap-3 p-3 hover:bg-secondary/50 rounded-md transition-colors',
         currency.code === isDefaultCode && 'opacity-50',
       )}
     >
@@ -63,9 +63,10 @@ export const AllCurrencies: React.FC<{ selected: Array<ICurrency> }> = ({
         checked={isChecked}
         onCheckedChange={async (e) => await updateCurrency(currency, !!e)}
         disabled={currency.code === isDefaultCode}
+        className="h-4 w-4"
       />
-      <div className="flex-1">{currency.name}</div>
-      <span className="text-muted-foreground">{currency.symbol}</span>
+      <div className="flex-1 text-sm">{currency.name}</div>
+      <span className="text-sm text-muted-foreground">{currency.symbol}</span>
     </Label>
   )
 
@@ -74,15 +75,15 @@ export const AllCurrencies: React.FC<{ selected: Array<ICurrency> }> = ({
       trigger={
         <Button
           variant="outline"
-          className="h-12 border-dashed hover:bg-secondary/50 transition-colors"
+          className="h-12 w-full border-dashed hover:bg-secondary/50 transition-colors"
         >
           <Plus size={18} className="mr-2" />
-          Add Currency
+          <span className="text-sm">Add Currency</span>
         </Button>
       }
       title="Select Currencies"
     >
-      <div className="relative mb-3">
+      <div className="relative mb-4">
         <Search
           className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
           size={16}
@@ -90,30 +91,34 @@ export const AllCurrencies: React.FC<{ selected: Array<ICurrency> }> = ({
         <Input
           type="search"
           placeholder="Search currencies..."
-          className="pl-9"
+          className="pl-9 h-10"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
       </div>
 
-      <div className="grid gap-1 overflow-auto max-h-80">
+      <div className="grid gap-1 overflow-auto max-h-[60vh] md:max-h-80">
         {sortedSelected.length > 0 && (
           <div className="space-y-1">
-            <div className="text-sm font-medium px-2">Selected Currencies</div>
+            <div className="text-sm font-medium px-2 py-1">
+              Selected Currencies
+            </div>
             {sortedSelected.map((currency) =>
               renderCurrencyItem(currency, true),
             )}
-            <Separator className="my-2" />
+            <Separator className="my-3" />
           </div>
         )}
 
         <div className="space-y-1">
           {sortedSelected.length > 0 && (
-            <div className="text-sm font-medium px-2">Available Currencies</div>
+            <div className="text-sm font-medium px-2 py-1">
+              Available Currencies
+            </div>
           )}
 
           {searchTerm && !filteredCurrencies.length ? (
-            <div className="text-center text-muted-foreground py-3">
+            <div className="text-center text-muted-foreground py-4 text-sm">
               No currencies found
             </div>
           ) : unselectedCurrencies.length ? (
@@ -121,11 +126,11 @@ export const AllCurrencies: React.FC<{ selected: Array<ICurrency> }> = ({
               renderCurrencyItem(currency, false),
             )
           ) : searchTerm ? (
-            <div className="text-center text-muted-foreground py-3">
+            <div className="text-center text-muted-foreground py-4 text-sm">
               No more currencies found
             </div>
           ) : (
-            <div className="text-center text-muted-foreground py-3">
+            <div className="text-center text-muted-foreground py-4 text-sm">
               All currencies have been selected
             </div>
           )}

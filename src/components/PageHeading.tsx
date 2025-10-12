@@ -3,7 +3,7 @@ export function PageHeading({
   subtitle,
 }: {
   title: string
-  subtitle: string
+  subtitle?: string
 }) {
   return (
     <div className="space-y-2">

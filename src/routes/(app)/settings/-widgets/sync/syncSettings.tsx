@@ -26,10 +26,10 @@ export function SyncSettings() {
   return (
     <div className="flex flex-col space-y-4">
       {!user && (
-        <div className="flex items-end justify-between gap-3">
-          <div className="space-y-1">
-            <h2>Cloud Sync</h2>
-            <p className="text-xs text-muted-foreground">
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+          <div className="space-y-2">
+            <h2 className="text-lg font-medium sm:text-xl">Cloud Sync</h2>
+            <p className="text-sm text-muted-foreground">
               Sign in to sync your data across devices
             </p>
           </div>
@@ -38,17 +38,22 @@ export function SyncSettings() {
       )}
 
       {user && (
-        <div className="flex items-center justify-between gap-3">
-          <div className="space-y-1">
-            <h2>Sync Data</h2>
-            <p className="text-xs text-muted-foreground">
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+          <div className="space-y-2">
+            <h2 className="text-lg font-medium sm:text-xl">Sync Data</h2>
+            <p className="text-sm text-muted-foreground">
               Keep your data synchronized with the cloud
             </p>
             {lastSynced && (
-              <p className="text-xs text-muted-foreground">{`Last synced: ${formatDistanceToNow(lastSynced)}`}</p>
+              <p className="text-sm text-muted-foreground">{`Last synced: ${formatDistanceToNow(lastSynced)}`}</p>
             )}
           </div>
-          <Button disabled={syncing} onClick={handleSync}>
+          <Button
+            disabled={syncing}
+            onClick={handleSync}
+            className="w-full sm:w-auto"
+            size="sm"
+          >
             {syncing ? 'Syncing...' : 'Sync Now'}
           </Button>
         </div>

@@ -65,14 +65,14 @@ export default function ThemeSelector() {
   }, [handleChange])
 
   return (
-    <div className="space-y-2">
-      <h2 className="text-xl font-medium">Color Theme</h2>
-      <div className="flex items-center gap-2">
+    <div className="space-y-3">
+      <h2 className="text-lg font-medium sm:text-xl">Color Theme</h2>
+      <div className="flex flex-wrap items-center gap-2">
         <Select value={theme} onValueChange={handleChange}>
           <SelectTrigger
             id="theme-selector"
             aria-label="Select color theme"
-            className="min-w-56"
+            className="flex-1 min-w-[180px] h-10"
           >
             <SelectValue placeholder="Choose a theme" />
           </SelectTrigger>
@@ -92,24 +92,28 @@ export default function ThemeSelector() {
             ))}
           </SelectContent>
         </Select>
-        <DarkModeToggle />
-        <Button
-          variant="outline"
-          size="icon"
-          onClick={() => handleChange('gray')}
-          aria-label="Reset to default theme"
-          disabled={theme === ''}
-        >
-          <RefreshCcw />
-        </Button>
-        <Button
-          variant="outline"
-          size="icon"
-          onClick={randomTheme}
-          aria-label="Random theme"
-        >
-          <Shuffle />
-        </Button>
+        <div className="flex gap-2">
+          <DarkModeToggle />
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => handleChange('gray')}
+            aria-label="Reset to default theme"
+            disabled={theme === ''}
+            className="h-10 w-10"
+          >
+            <RefreshCcw className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={randomTheme}
+            aria-label="Random theme"
+            className="h-10 w-10"
+          >
+            <Shuffle className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
     </div>
   )

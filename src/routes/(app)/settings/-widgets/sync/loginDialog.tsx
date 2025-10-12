@@ -64,12 +64,20 @@ export function LoginDialog() {
       }}
     >
       <DialogTrigger asChild>
-        <Button variant="outline">Cloud sync</Button>
+        <Button
+          variant="outline"
+          className="w-full sm:w-auto text-sm"
+          size="sm"
+        >
+          Cloud sync
+        </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Sign in to enable cloud sync</DialogTitle>
-          <DialogDescription>
+          <DialogTitle className="text-lg sm:text-xl">
+            Sign in to enable cloud sync
+          </DialogTitle>
+          <DialogDescription className="text-sm">
             Access your financial data securely across all your devices
           </DialogDescription>
         </DialogHeader>
@@ -80,7 +88,7 @@ export function LoginDialog() {
             e.stopPropagation()
             form.handleSubmit()
           }}
-          className="space-y-4"
+          className="space-y-4 py-2"
         >
           <form.AppField name="email">
             {(field) => (
@@ -104,15 +112,17 @@ export function LoginDialog() {
             )}
           </form.AppField>
 
-          {error && <p className="text-xs text-destructive">{error}</p>}
+          {error && <p className="text-sm text-destructive">{error}</p>}
 
-          <DialogFooter>
+          <DialogFooter className="pt-2">
             <form.Subscribe
               selector={(state) => [state.canSubmit, state.isSubmitting]}
               children={([canSubmit, isSubmitting]) => (
                 <Button
                   type="submit"
                   disabled={!canSubmit || isSubmitting || syncing}
+                  className="w-full sm:w-auto"
+                  size="sm"
                 >
                   {syncing ? 'Processing...' : 'Login & Sync'}
                 </Button>

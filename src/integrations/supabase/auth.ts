@@ -7,6 +7,7 @@ export async function signInWithEmail(email: string, password: string) {
   })
 
   if (error) throw error
+  localStorage.setItem('user_id', data.user.id)
   return data
 }
 
@@ -22,6 +23,7 @@ export async function signUpWithEmail(email: string, password: string) {
 
 export async function signOut() {
   const { error } = await supabase.auth.signOut()
+  localStorage.removeItem('user_id')
   if (error) throw error
 }
 

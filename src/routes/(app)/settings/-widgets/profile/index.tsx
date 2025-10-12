@@ -1,7 +1,6 @@
 import { LogOut, Mail } from 'lucide-react'
 import { useAuth } from '@/integrations/supabase/useAuth'
 import { signOut } from '@/integrations/supabase/auth'
-import { db } from '@/integrations/db/db'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Separator } from '@/components/ui/separator'
@@ -12,6 +11,7 @@ import {
 } from '@/components/ui/popover'
 import { Badge } from '@/components/ui/badge'
 import { PageHeading } from '@/components/PageHeading'
+import { resetLocal } from '@/integrations/sync/resetLocal'
 
 export function ProfileWidget() {
   const { user } = useAuth()
@@ -19,20 +19,8 @@ export function ProfileWidget() {
   if (!user) return null
 
   const handleLogout = async () => {
-    try {
-      await Promise.all([
-        db.accounts.clear(),
-        db.categories.clear(),
-        db.transactions.clear(),
-        db.budgets.clear(),
-        db.daily_summaries.clear(),
-        db.currencies.clear(),
-      ])
-      localStorage.removeItem('user_id')
-      await signOut()
-    } catch (error) {
-      console.error('Error during logout:', error)
-    }
+    await signOut()
+    await resetLocal()
   }
 
   const getInitials = (email: string) => {

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
+import { cn } from '@/lib'
 
 let deferredPrompt: any
 
@@ -53,22 +54,36 @@ export function PWAInstallPrompt() {
   if (!installable) return null
 
   return (
-    <div className="fixed bottom-3 left-3 right-3 sm:max-w-sm sm:left-auto sm:right-3 bg-white dark:bg-gray-800 p-3 rounded-xl shadow-lg flex items-center justify-between z-50 transition-all duration-300">
+    <div
+      className={cn(
+        'fixed inset-x-3 bottom-[64px] sm:bottom-6 sm:right-6 sm:left-auto sm:w-[360px]',
+        'bg-background/90 backdrop-blur-md border border-border/40 shadow-xl rounded-2xl z-50',
+        'p-4 flex items-start sm:items-center justify-between gap-3',
+        'animate-in fade-in slide-in-from-bottom-4 duration-300',
+      )}
+    >
       <div className="flex-1 min-w-0">
-        <h3 className="font-semibold text-sm truncate">Install Finsyghts</h3>
-        <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-          Add to your device for quick access
+        <h3 className="font-semibold text-sm sm:text-base text-foreground truncate">
+          Install Finsyghts
+        </h3>
+        <p className="text-xs sm:text-sm text-muted-foreground truncate">
+          Add to your home screen for quick access
         </p>
       </div>
-      <div className="flex gap-1.5 pl-2">
+      <div className="flex flex-shrink-0 gap-2">
         <Button
-          variant="outline"
-          className="text-xs py-1 px-2"
+          variant="ghost"
+          size="sm"
+          className="text-xs sm:text-sm"
           onClick={() => setInstallable(false)}
         >
           Not now
         </Button>
-        <Button className="text-xs py-1 px-2" onClick={handleInstallClick}>
+        <Button
+          size="sm"
+          className="text-xs sm:text-sm"
+          onClick={handleInstallClick}
+        >
           Install
         </Button>
       </div>

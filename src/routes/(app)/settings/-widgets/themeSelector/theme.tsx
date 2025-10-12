@@ -72,13 +72,13 @@ export default function ThemeSelector() {
           <SelectTrigger
             id="theme-selector"
             aria-label="Select color theme"
-            className="flex-1 min-w-[180px] h-8 text-xs"
+            className="flex-1 min-w-[180px]"
           >
             <SelectValue placeholder="Choose a theme" />
           </SelectTrigger>
           <SelectContent className="max-h-80" hideScrollButtons>
             {THEME_OPTIONS.map((opt) => (
-              <SelectItem key={opt.id} value={opt.id} className="gap-3 text-xs">
+              <SelectItem key={opt.id} value={opt.id} className="gap-4">
                 <div className="flex items-center gap-2" data-theme={opt.id}>
                   <div className="relative grid grid-cols-4 items-center gap-0.5">
                     <div className="size-1.5 rounded-full border border-border bg-primary" />
@@ -86,7 +86,7 @@ export default function ThemeSelector() {
                     <div className="size-1.5 rounded-full border border-border bg-accent" />
                     <div className="size-1.5 rounded-full border border-border bg-background" />
                   </div>
-                  <span className="font-medium text-xs">{opt.name}</span>
+                  <span>{opt.name}</span>
                 </div>
               </SelectItem>
             ))}

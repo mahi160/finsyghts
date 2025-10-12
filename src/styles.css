@@ -133,19 +133,18 @@ code {
   }
   body {
     @apply bg-background text-foreground;
+    font-size: 0.875rem;
   }
 }
 
 /* Headings */
 h1 {
-  font-size: 2.25rem;
+  font-size: 1.5rem;
   font-weight: 600;
   line-height: 1.2;
-  lester-spacing: -2px;
 }
 h2 {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   font-weight: 500;
   line-height: 1.3;
-  lester-spacing: -2px;
 }

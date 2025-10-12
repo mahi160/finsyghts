@@ -17,5 +17,6 @@ export function formatDate(
   dateString: string | Date,
   formatStr = 'MMM dd, yyyy',
 ) {
-  return format(new Date(dateString), formatStr)
+  const d = typeof dateString === 'string' ? new Date(dateString) : dateString
+  return format(d, formatStr)
 }

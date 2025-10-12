@@ -1,85 +1,108 @@
 import { z } from 'zod'
 import { useAppForm } from '../Form/useAppForm'
+import { addRecord } from './service'
+import {
+  useAccountsStore,
+  useCategoriesStore,
+} from '@/integrations/db/db.store'
+import { ETransactionType } from '@/integrations/db/db.type'
 
 const schema = z.object({
-  amount: z.number('Amount is required'),
+  amount: z.string('Amount is required'),
   account_from_id: z.string().min(1, 'Account From is required'),
   category_id: z.string().optional(),
-  date: z.string().min(1, 'Date is required'),
+  date: z.date('Date is required'),
   description: z.string().optional(),
 })
+
 export function ExpenseForm() {
+  const { items: accounts } = useAccountsStore()
+  const accountOptions = accounts
+    .filter((acc) => !acc.is_archived)
+    .map((account) => ({
+      label: account.name,
+      value: account.id,
+    }))
+
+  const { items: category } = useCategoriesStore()
+  const categoryOptions = category
+    .filter((cat) => cat.transaction_type === ETransactionType.INCOME)
+    .map((cat) => ({
+      label: cat.name,
+      value: cat.id,
+    }))
+
   const form = useAppForm({
     validators: {
-      onBlur: schema,
-      onSubmit: schema,
+      onChange: schema,
+    },
+    onSubmit: async (values) => {
+      const v = values.value as z.infer<typeof schema>
+      await addRecord({
+        ...v,
+        amount: Number(v.amount),
+        type: ETransactionType.EXPENSE,
+      })
     },
   })
+
   return (
-    <div className="mx-auto w-full max-w-md p-4 sm:p-6 lg:p-8">
-      <form className="space-y-6">
-        <div className="grid gap-6 sm:grid-cols-2">
-          <form.AppField name="amount">
-            {(field) => (
-              <field.Input
-                name={field.name}
-                label="Amount"
-                type="number"
-                className="transition-all duration-200 focus:scale-[1.02]"
-              />
-            )}
-          </form.AppField>
-          <form.AppField name="date">
-            {(field) => (
-              <field.Input
-                name={field.name}
-                label="Date"
-                type="date"
-                className="transition-all duration-200 focus:scale-[1.02]"
-              />
-            )}
-          </form.AppField>
-        </div>
-
-        <form.AppField name="account_from_id">
-          {(field) => (
-            <field.Input
-              name={field.name}
-              label="Account From"
-              type="text"
-              className="transition-all duration-200 focus:scale-[1.02]"
-            />
-          )}
-        </form.AppField>
-
-        <form.AppField name="category_id">
-          {(field) => (
-            <field.Input
-              name={field.name}
-              label="Category"
-              type="text"
-              className="transition-all duration-200 focus:scale-[1.02]"
-            />
-          )}
-        </form.AppField>
-
-        <form.AppField name="description">
-          {(field) => (
-            <field.Textarea
-              name={field.name}
-              label="Description"
-              className="min-h-[100px] resize-none transition-all duration-200 focus:scale-[1.02]"
-            />
-          )}
-        </form.AppField>
-
-        <form.AppForm>
-          <form.FormButton
-            label="Add Expense"
-            className="mt-8 w-full py-3 font-medium transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+    <form
+      className="space-y-4"
+      onSubmit={(e) => {
+        e.preventDefault()
+        form.handleSubmit()
+      }}
+    >
+      <form.AppField name="amount">
+        {(field) => (
+          <field.Input
+            name={field.name}
+            label="Amount"
+            type="number"
+            placeholder="Amount"
           />
-        </form.AppForm>
-      </form>
-    </div>
+        )}
+      </form.AppField>
+      <form.AppField name="date">
+        {(field) => <field.DatePicker label="Date" />}
+      </form.AppField>
+
+      <form.AppField name="account_from_id">
+        {(field) => (
+          <field.Select
+            name={field.name}
+            label="Account From"
+            options={accountOptions}
+            placeholder="Select account"
+          />
+        )}
+      </form.AppField>
+
+      <form.AppField name="category_id">
+        {(field) => (
+          <field.Select
+            name={field.name}
+            label="Category"
+            options={categoryOptions}
+            placeholder="Select category"
+          />
+        )}
+      </form.AppField>
+
+      <form.AppField name="description">
+        {(field) => (
+          <field.Textarea
+            name={field.name}
+            label="Description"
+            placeholder="Add a description"
+          />
+        )}
+      </form.AppField>
+
+      <form.AppForm>
+        <form.FormButton label="Add Expense" className="w-full" />
+      </form.AppForm>
+    </form>
   )
 }

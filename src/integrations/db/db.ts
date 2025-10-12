@@ -36,11 +36,11 @@ class FinancialDatabase extends Dexie {
     super('FinancialDatabase')
     this.version(1).stores({
       transactions:
-        '&id, user_id, date, type, account_from_id, account_to_id, category_id, amount, sync_status, currency, [user_id+date], [user_id+sync_status], [date+type], [account_from_id+date], [category_id+date], [user_id+date+type]',
+        '&id, user_id, date, type, account_from_id, account_to_id, category_id, amount, sync_status, currency, [user_id+date], [user_id+sync_status], [date+type], [account_from_id+date], [category_id+date], [user_id+date+type], [id+user_id]',
       accounts:
         '&id, user_id, name, type, currency, balance, is_archived, sync_status, [user_id+type], [user_id+sync_status], [user_id+is_archived], [type+is_archived], [id+user_id]',
       categories:
-        '&id, user_id, name, transaction_type, parent_category_id, is_archived, sync_status, [user_id+transaction_type], [user_id+sync_status], [user_id+is_archived], [parent_category_id+transaction_type]',
+        '&id, user_id, name, transaction_type, parent_category_id, is_archived, sync_status, [user_id+transaction_type], [user_id+sync_status], [user_id+is_archived], [parent_category_id+transaction_type], [id+user_id]',
       budgets:
         '&id, user_id, category_id, period_start, period_end, period_key, amount, currency, is_archived, sync_status, [user_id+category_id], [user_id+sync_status], [user_id+period_key], [category_id+period_key]',
       daily_summaries:

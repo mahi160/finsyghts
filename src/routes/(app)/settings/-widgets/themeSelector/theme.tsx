@@ -65,28 +65,28 @@ export default function ThemeSelector() {
   }, [handleChange])
 
   return (
-    <div className="space-y-3">
-      <h2 className="text-lg font-medium sm:text-xl">Color Theme</h2>
+    <div className="space-y-2">
+      <h2 className="text-base font-medium">Color Theme</h2>
       <div className="flex flex-wrap items-center gap-2">
         <Select value={theme} onValueChange={handleChange}>
           <SelectTrigger
             id="theme-selector"
             aria-label="Select color theme"
-            className="flex-1 min-w-[180px] h-10"
+            className="flex-1 min-w-[180px] h-8 text-xs"
           >
             <SelectValue placeholder="Choose a theme" />
           </SelectTrigger>
           <SelectContent className="max-h-80" hideScrollButtons>
             {THEME_OPTIONS.map((opt) => (
-              <SelectItem key={opt.id} value={opt.id} className="gap-3">
+              <SelectItem key={opt.id} value={opt.id} className="gap-3 text-xs">
                 <div className="flex items-center gap-2" data-theme={opt.id}>
-                  <div className="relative grid grid-cols-4 items-center gap-1">
-                    <div className="size-2 rounded-full border border-border bg-primary" />
-                    <div className="size-2 rounded-full border border-border bg-secondary" />
-                    <div className="size-2 rounded-full border border-border bg-accent" />
-                    <div className="size-2 rounded-full border border-border bg-background" />
+                  <div className="relative grid grid-cols-4 items-center gap-0.5">
+                    <div className="size-1.5 rounded-full border border-border bg-primary" />
+                    <div className="size-1.5 rounded-full border border-border bg-secondary" />
+                    <div className="size-1.5 rounded-full border border-border bg-accent" />
+                    <div className="size-1.5 rounded-full border border-border bg-background" />
                   </div>
-                  <span className="font-medium">{opt.name}</span>
+                  <span className="font-medium text-xs">{opt.name}</span>
                 </div>
               </SelectItem>
             ))}
@@ -100,18 +100,18 @@ export default function ThemeSelector() {
             onClick={() => handleChange('gray')}
             aria-label="Reset to default theme"
             disabled={theme === ''}
-            className="h-10 w-10"
+            className="h-8 w-8"
           >
-            <RefreshCcw className="h-4 w-4" />
+            <RefreshCcw className="h-3.5 w-3.5" />
           </Button>
           <Button
             variant="outline"
             size="icon"
             onClick={randomTheme}
             aria-label="Random theme"
-            className="h-10 w-10"
+            className="h-8 w-8"
           >
-            <Shuffle className="h-4 w-4" />
+            <Shuffle className="h-3.5 w-3.5" />
           </Button>
         </div>
       </div>

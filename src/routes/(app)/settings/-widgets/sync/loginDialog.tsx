@@ -66,7 +66,7 @@ export function LoginDialog() {
       <DialogTrigger asChild>
         <Button
           variant="outline"
-          className="w-full sm:w-auto text-sm"
+          className="w-full sm:w-auto text-xs h-8"
           size="sm"
         >
           Cloud sync
@@ -74,10 +74,10 @@ export function LoginDialog() {
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-lg sm:text-xl">
+          <DialogTitle className="text-base font-medium">
             Sign in to enable cloud sync
           </DialogTitle>
-          <DialogDescription className="text-sm">
+          <DialogDescription className="text-xs">
             Access your financial data securely across all your devices
           </DialogDescription>
         </DialogHeader>
@@ -88,7 +88,7 @@ export function LoginDialog() {
             e.stopPropagation()
             form.handleSubmit()
           }}
-          className="space-y-4 py-2"
+          className="space-y-3 py-2"
         >
           <form.AppField name="email">
             {(field) => (
@@ -97,6 +97,7 @@ export function LoginDialog() {
                 label="Email"
                 type="email"
                 placeholder="john.doe@example.com"
+                className="text-xs h-8"
               />
             )}
           </form.AppField>
@@ -108,11 +109,12 @@ export function LoginDialog() {
                 label="Password"
                 name={field.name}
                 placeholder="Your secure password"
+                className="text-xs h-8"
               />
             )}
           </form.AppField>
 
-          {error && <p className="text-sm text-destructive">{error}</p>}
+          {error && <p className="text-xs text-destructive">{error}</p>}
 
           <DialogFooter className="pt-2">
             <form.Subscribe
@@ -121,7 +123,7 @@ export function LoginDialog() {
                 <Button
                   type="submit"
                   disabled={!canSubmit || isSubmitting || syncing}
-                  className="w-full sm:w-auto"
+                  className="w-full sm:w-auto text-xs h-8"
                   size="sm"
                 >
                   {syncing ? 'Processing...' : 'Login & Sync'}

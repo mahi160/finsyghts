@@ -33,12 +33,12 @@ export default function DarkModeToggle() {
       aria-label={`Switch to ${isDark ? 'light' : 'dark'} mode`}
       variant="outline"
       size="icon"
-      className="h-10 w-10"
+      className="h-8 w-8"
     >
       {isDark ? (
-        <MoonIcon className="h-4 w-4" />
+        <MoonIcon className="h-3.5 w-3.5" />
       ) : (
-        <SunIcon className="h-4 w-4" />
+        <SunIcon className="h-3.5 w-3.5" />
       )}
     </Button>
   )

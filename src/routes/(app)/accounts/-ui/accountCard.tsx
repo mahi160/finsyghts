@@ -44,13 +44,13 @@ export function AccountCard({ account }: AccountCardProps) {
       {/* Balance */}
       <main className="relative z-10 mt-1 sm:mt-3">
         <p className="text-muted-foreground text-xs">Current Balance</p>
-        <code className="font-semibold text-xl sm:text-2xl tracking-tight">
+        <p className="font-semibold text-xl sm:text-2xl tracking-tight">
           {type === 'credit' && '-'}
           {intPart}
           <span className="text-xs sm:text-sm font-normal text-foreground/70">
             .{decPart}
           </span>
-        </code>
+        </p>
       </main>
 
       {/* Footer + archived badge */}

@@ -25,6 +25,8 @@ export function TransactionList({
 
     transactions.forEach((transaction) => {
       const dateKey = formatDate(transaction.date, 'yyyy-MM-dd')
+      // eslint-disable-next-line
+      if (!grouped[dateKey]) grouped[dateKey] = []
       grouped[dateKey].push(transaction)
     })
 

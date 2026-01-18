@@ -1,6 +1,7 @@
 import { importDB } from 'dexie-export-import'
 import { useRef, useState } from 'react'
 import { toast } from 'sonner'
+import { Upload } from 'lucide-react'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -25,7 +26,7 @@ export function Import() {
   const validateFile = (targetFile: File) => {
     if (targetFile.size > 10 * 1024 * 1024)
       throw new Error('File must be under 10MB')
-    if (!targetFile.type.includes('json'))
+    if (!targetFile.type.includes('json') && !targetFile.name.endsWith('.json'))
       throw new Error('Only JSON files are allowed')
   }
 
@@ -92,7 +93,7 @@ export function Import() {
       <Button
         onClick={() => inputRef.current?.click()}
         disabled={isImporting}
-        className="flex flex-col items-center w-32"
+        className="flex  items-center text-sm"
         variant="outline"
       >
         {isImporting ? (
@@ -101,7 +102,10 @@ export function Import() {
             <Progress value={progress} className="h-2 w-full" />
           </div>
         ) : (
-          'Import'
+          <>
+            <Upload className="h-4 w-4" />
+            Import Data
+          </>
         )}
       </Button>
 
@@ -110,7 +114,8 @@ export function Import() {
           <AlertDialogHeader>
             <AlertDialogTitle>Replace all data?</AlertDialogTitle>
             <AlertDialogDescription>
-              This will overwrite existing data. Action cannot be undone.
+              This will overwrite existing data with the imported JSON file.
+              This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

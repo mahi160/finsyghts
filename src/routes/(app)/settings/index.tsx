@@ -3,6 +3,8 @@ import { CurrencySettings } from './-widgets/currency'
 import ThemeSelector from './-widgets/themeSelector/theme'
 import { SyncSettings } from './-widgets/sync/syncSettings'
 import { ProfileWidget } from './-widgets/profile'
+import { ImportExportWidget } from './-widgets/import-export'
+import { DangerZone } from './-widgets/dangerZone'
 import { Card, CardContent } from '@/components/ui/card'
 
 export const Route = createFileRoute('/(app)/settings/')({
@@ -30,6 +32,10 @@ function RouteComponent() {
           <CurrencySettings />
         </CardContent>
       </Card>
+      <div className="grid grid-cols-1 gap-6">
+        <ImportExportWidget />
+      </div>
+      <DangerZone />
     </div>
   )
 }

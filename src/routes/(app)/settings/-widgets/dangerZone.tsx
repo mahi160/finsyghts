@@ -47,7 +47,7 @@ export function DangerZone() {
   return (
     <Card className="border-destructive/20 bg-destructive/5">
       <CardHeader>
-        <CardTitle className="text-destructive">Danger Zone</CardTitle>
+        <CardTitle className="text-destructive text-lg">Danger Zone</CardTitle>
         <CardDescription>
           Actions here can cause data loss. Use with extreme caution.
         </CardDescription>
@@ -55,14 +55,18 @@ export function DangerZone() {
       <CardContent>
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="font-medium">Reset Local Data</h3>
+            <h3 className="font-medium text-sm">Reset Local Data</h3>
             <p className="text-xs text-muted-foreground">
               Deletes all local data and pulls fresh copy from the cloud.
             </p>
           </div>
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="destructive" disabled={isResetting}>
+              <Button
+                variant="destructive"
+                disabled={isResetting}
+                className="text-sm"
+              >
                 {isResetting ? 'Resetting...' : 'Reset Data'}
               </Button>
             </AlertDialogTrigger>

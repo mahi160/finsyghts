@@ -55,6 +55,27 @@ export function Import() {
       })
 
       await db.open()
+
+      // Update all imported records to use current user's ID
+      const currentUserId = localStorage.getItem('user_id')
+      if (currentUserId) {
+        const tables = [
+          db.transactions,
+          db.accounts,
+          db.categories,
+          db.budgets,
+          db.daily_summaries,
+          db.currencies,
+        ]
+
+        for (const table of tables) {
+          await table
+            .where('user_id')
+            .notEqual(currentUserId)
+            .modify({ user_id: currentUserId })
+        }
+      }
+
       toast.success('Import completed!')
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Import failed')

@@ -12,7 +12,9 @@ import { useCategoriesStore } from '@/integrations/db/db.store'
 
 export const categorySchema = z.object({
   name: z.string().min(1, 'Name is required'),
-  transaction_type: z.string(),
+  transaction_type: z.nativeEnum(ETransactionType, {
+    errorMap: () => ({ message: 'Please select a transaction type' }),
+  }),
   icon: z.string(),
   is_archived: z.boolean(),
 })

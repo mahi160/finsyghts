@@ -8,7 +8,14 @@ import {
 import { ETransactionType } from '@/integrations/db/db.type'
 
 const schema = z.object({
-  amount: z.string('Amount is required'),
+  amount: z
+    .string()
+    .min(1, 'Amount is required')
+    .refine(
+      (val) =>
+        !isNaN(Number(val)) && Number(val) > 0 && Number(val) <= 999999999,
+      'Amount must be a positive number between 0 and 999,999,999',
+    ),
   account_to_id: z.string().min(1, 'Account From is required'),
   category_id: z.string().optional(),
   date: z.date('Date is required'),
@@ -101,7 +108,7 @@ export function IncomeForm() {
       </form.AppField>
 
       <form.AppForm>
-        <form.FormButton label="Add Expense" className="w-full" />
+        <form.FormButton label="Add Income" className="w-full" />
       </form.AppForm>
     </form>
   )
